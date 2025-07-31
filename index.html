@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>RetroAvia - The Dark Chronicles</title>
     <style>
         /* Font Imports - Embedded per evitare errori CORS */
@@ -22,6 +25,7 @@
             font-weight: 300 600;
             font-display: swap;
         }
+        
         :root {
             --neon-blue: #00d4ff;
             --neon-purple: #8b5cf6;
@@ -54,6 +58,180 @@
             user-select: none;
             height: 100vh;
             position: relative;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        /* NASCONDI COMPLETAMENTE TUTTO IL CODICE VISIBILE */
+        .screen:not(.active) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        .story-overlay:not(.active),
+        .pause-overlay:not(.active),
+        .overlay:not(.active) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* Nascondi elementi del gioco quando non in game */
+        body:not(.game-active) .game-ui,
+        body:not(.game-active) .world,
+        body:not(.game-active) .mobile-controls {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        /* RESPONSIVE DESIGN MIGLIORATO - Mobile First */
+        @media screen and (orientation: portrait) and (max-width: 768px) {
+            body {
+                overflow: hidden;
+                /* Rimuovo il transform scale problematico */
+            }
+            
+            .game-container {
+                /* Uso viewport units più appropriati */
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .mobile-controls { 
+                display: flex; 
+                bottom: 15px;
+                left: 15px;
+                right: 15px;
+                /* Controlli più grandi per touch */
+                gap: 20px;
+            }
+            
+            .control-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.4rem;
+                /* Miglior feedback tattile */
+                border: 3px solid var(--neon-blue);
+            }
+            
+            /* HUD più compatto per mobile */
+            .futuristic-hud {
+                height: 60px;
+                padding: 5px 10px;
+            }
+            
+            .hud-layout { 
+                grid-template-columns: 1fr auto;
+                grid-template-rows: auto auto;
+                gap: 8px;
+                padding: 8px 15px;
+            }
+            
+            .player-panel {
+                grid-column: 1 / -1;
+                grid-row: 1;
+                padding: 6px 10px;
+            }
+            
+            .game-dashboard {
+                grid-column: 1;
+                grid-row: 2;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .control-cluster {
+                grid-column: 2;
+                grid-row: 2;
+                align-self: center;
+                gap: 5px;
+            }
+            
+            .energy-system {
+                grid-column: 1 / -1;
+                grid-row: 3;
+                padding: 6px 10px;
+                margin-top: 5px;
+            }
+
+            /* Menu mobile ottimizzato */
+            .mission-cards {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .mission-card {
+                padding: 15px;
+            }
+            
+            .retro-logo .retro-text {
+                font-size: clamp(2rem, 8vw, 3.5rem);
+            }
+            
+            .dark-chronicles {
+                font-size: clamp(0.8rem, 3vw, 1rem);
+                letter-spacing: 1.5px;
+            }
+            
+            .briefing-intro {
+                font-size: 0.9rem;
+                padding: 0 10px;
+                line-height: 1.5;
+            }
+            
+            .futuristic-input {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+                max-width: 300px;
+            }
+            
+            .launch-button {
+                font-size: 0.9rem;
+                padding: 10px 25px;
+                min-width: 200px;
+            }
+
+            .story-content {
+                padding: 20px 15px;
+                width: 95%;
+                margin: 10px;
+            }
+
+            .story-title {
+                font-size: 1.4rem;
+            }
+
+            .story-text {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+        }
+
+        /* Adaptive Quality - Riduce effetti su device lenti */
+        @media (max-width: 480px), (max-height: 600px) {
+            .energy-wave {
+                animation: none;
+            }
+            
+            .background-layer {
+                opacity: 0.1;
+            }
+            
+            * {
+                will-change: auto;
+            }
+            
+            .collectible {
+                animation-duration: 4s;
+            }
+            
+            .enemy {
+                animation-duration: 3s;
+            }
         }
 
         /* Animated Background */
@@ -114,6 +292,7 @@
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
         }
 
         .screen.active {
@@ -529,6 +708,15 @@
             bottom: 0;
             pointer-events: none;
             z-index: 100;
+        }
+
+        .world {
+            position: absolute;
+            width: 2000px;
+            height: 100vh;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            contain: layout style paint;
         }
 
         /* HUD OTTIMIZZATO */
@@ -953,16 +1141,27 @@
             box-shadow: var(--glow) var(--neon-blue);
         }
 
-        /* Audio Controls */
+        /* Controlli TTS e Qualità */
         .audio-controls {
             position: absolute;
             bottom: 15px;
-            right: 15px;
+            left: 15px;
             pointer-events: all;
             z-index: 200;
+            display: flex;
+            gap: 8px;
         }
 
-        .audio-btn {
+        @media (max-width: 768px) {
+            .audio-controls {
+                bottom: 90px;
+                left: 10px;
+                flex-direction: column;
+                gap: 6px;
+            }
+        }
+
+        .audio-btn, .quality-btn {
             background: var(--glass);
             border: 2px solid var(--neon-blue);
             color: var(--neon-blue);
@@ -972,9 +1171,14 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             font-size: 0.9rem;
+            min-width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .audio-btn:hover {
+        .audio-btn:hover, .quality-btn:hover {
             background: var(--neon-blue);
             color: white;
         }
@@ -984,13 +1188,9 @@
             border-color: var(--neon-red);
         }
 
-        .world {
-            position: absolute;
-            width: 2000px;
-            height: 100vh;
-            will-change: transform;
-            transform: translate3d(0, 0, 0);
-            contain: layout style paint;
+        .quality-btn.low-quality {
+            color: var(--neon-orange);
+            border-color: var(--neon-orange);
         }
 
         /* Game Objects */
@@ -1019,6 +1219,40 @@
         .player.respawning {
             pointer-events: none;
             animation: respawnFlash 0.15s ease-in-out infinite;
+        }
+
+        /* NUOVA ANIMAZIONE DEATH */
+        .player.dying {
+            animation: playerDeath 0.8s ease-out forwards;
+            z-index: 50;
+        }
+
+        @keyframes playerDeath {
+            0% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+                box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            }
+            25% { 
+                transform: scale(1.2) rotate(90deg);
+                opacity: 0.8;
+                box-shadow: 0 0 30px rgba(255, 59, 59, 0.8);
+            }
+            50% { 
+                transform: scale(0.8) rotate(180deg);
+                opacity: 0.6;
+                box-shadow: 0 0 40px rgba(255, 59, 59, 1);
+            }
+            75% { 
+                transform: scale(0.4) rotate(270deg);
+                opacity: 0.3;
+                box-shadow: 0 0 20px rgba(255, 59, 59, 0.5);
+            }
+            100% { 
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+                box-shadow: 0 0 5px rgba(255, 59, 59, 0.2);
+            }
         }
 
         @keyframes playerPulse {
@@ -1222,7 +1456,7 @@
             text-shadow: var(--glow) var(--neon-red);
         }
 
-        /* Story buttons - SEMPLIFICATI */
+        /* Story buttons */
         .story-buttons {
             display: flex;
             gap: 15px;
@@ -1262,149 +1496,7 @@
             100% { transform: scale(2); opacity: 0; }
         }
 
-        /* RESPONSIVE DESIGN MIGLIORATO */
-        @media (max-width: 768px) {
-            body {
-                transform: scale(1);
-                transform-origin: center;
-                width: 100vw;
-                height: 100vh;
-                overflow: hidden;
-            }
-            
-            .mobile-controls { 
-                display: flex; 
-                bottom: 10px;
-                left: 10px;
-                right: 10px;
-            }
-            
-            .control-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-            
-            .hud-layout { 
-                grid-template-columns: 1fr auto;
-                grid-template-rows: auto auto auto;
-                gap: 6px;
-                padding: 6px 12px;
-            }
-            
-            .player-panel {
-                grid-column: 1 / -1;
-                grid-row: 1;
-                padding: 5px 8px;
-            }
-            
-            .game-dashboard {
-                grid-column: 1;
-                grid-row: 2;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 6px;
-            }
-            
-            .control-cluster {
-                grid-column: 2;
-                grid-row: 2;
-                align-self: center;
-                gap: 3px;
-            }
-            
-            .energy-system {
-                grid-column: 1 / -1;
-                grid-row: 3;
-                padding: 5px 8px;
-            }
-
-            .futuristic-hud { 
-                height: auto;
-                min-height: 75px;
-            }
-
-            .neo-btn { 
-                padding: 5px 7px; 
-                font-size: 0.6rem; 
-                min-width: 30px;
-            }
-
-            .metric-card { 
-                padding: 4px 6px; 
-            }
-
-            .metric-value {
-                font-size: 0.75rem;
-            }
-
-            .metric-label {
-                font-size: 0.55rem;
-            }
-
-            .player-avatar {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-
-            .player-name {
-                font-size: 0.75rem;
-            }
-
-            .player-level {
-                font-size: 0.65rem;
-            }
-
-            /* Menu mobile ottimizzato */
-            .mission-cards {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .mission-card {
-                padding: 10px;
-            }
-            
-            .retro-logo .retro-text {
-                font-size: clamp(1.8rem, 8vw, 3rem);
-            }
-            
-            .dark-chronicles {
-                font-size: clamp(0.7rem, 2.5vw, 0.9rem);
-                letter-spacing: 1px;
-            }
-            
-            .briefing-intro {
-                font-size: 0.85rem;
-                padding: 0 8px;
-            }
-            
-            .futuristic-input {
-                font-size: 0.85rem;
-                padding: 8px 12px;
-                max-width: 280px;
-            }
-            
-            .launch-button {
-                font-size: 0.85rem;
-                padding: 8px 20px;
-                min-width: 180px;
-            }
-
-            .story-content {
-                padding: 20px;
-                width: 95%;
-            }
-
-            .story-title {
-                font-size: 1.5rem;
-            }
-
-            .story-text {
-                font-size: 0.9rem;
-            }
-        }
-
+        /* CORREZIONE MOBILE - Rimuovo scale problematico */
         @media (max-width: 480px) {
             .hud-layout {
                 padding: 4px 8px;
@@ -1412,9 +1504,9 @@
             }
 
             .control-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
             }
 
             .neo-btn {
@@ -1444,6 +1536,18 @@
             .launch-button {
                 min-width: 160px;
                 padding: 6px 16px;
+            }
+            
+            /* Fix viewport per portrait */
+            .game-container {
+                width: 100vw;
+                height: 100vh;
+                /* Rimuovo transform scale problematico */
+            }
+            
+            /* Camera fix per mobile */
+            .world {
+                width: 150vw; /* Riduco larghezza mondo per mobile */
             }
         }
     </style>
@@ -1601,9 +1705,10 @@
                     </div>
                 </div>
 
-                <!-- Audio controls -->
+                <!-- Audio e Quality controls -->
                 <div class="audio-controls">
                     <button id="audioToggle" class="audio-btn" onclick="toggleAudio()" title="Audio Toggle">🔊</button>
+                    <button id="qualityToggle" class="quality-btn" onclick="toggleQuality()" title="Qualità Grafica">⚙️</button>
                 </div>
             </div>
             
@@ -1635,7 +1740,7 @@
         // Initialize game manager globally
         let gameManager = null;
 
-        // High-Performance Audio Manager
+        // Enhanced Audio Manager con Musica Dinamica
         class AudioManager {
             constructor() {
                 this.audioContext = null;
@@ -1647,6 +1752,7 @@
                 this.musicVolume = 0.12;
                 this.sfxVolume = 0.35;
                 this.musicOscillators = [];
+                this.currentMusicLevel = 0;
                 this.init();
             }
 
@@ -1673,11 +1779,127 @@
                 }
             }
 
+            // Musica dinamica per livello
+            startLevelMusic(level) {
+                if (this.currentMusicLevel === level) return;
+                
+                this.currentMusicLevel = level;
+                this.stopMusic();
+                
+                const levelMusics = {
+                    1: this.createLevelMusic1.bind(this),
+                    2: this.createLevelMusic2.bind(this),
+                    3: this.createLevelMusic3.bind(this),
+                    4: this.createLevelMusic4.bind(this),
+                    5: this.createLevelMusic5.bind(this)
+                };
+                
+                const musicFunction = levelMusics[level] || this.createLevelMusic1.bind(this);
+                setTimeout(() => musicFunction(), 500);
+            }
+
+            createLevelMusic1() {
+                this.playMusicLoop([
+                    [110, 146.83, 174.61],
+                    [87.31, 130.81, 174.61],
+                    [130.81, 164.81, 196],
+                    [98, 146.83, 185]
+                ], 12, 'sine');
+            }
+
+            createLevelMusic2() {
+                this.playMusicLoop([
+                    [164.81, 196, 246.94],
+                    [146.83, 174.61, 220],
+                    [130.81, 164.81, 196],
+                    [123.47, 155.56, 185]
+                ], 10, 'triangle');
+            }
+
+            createLevelMusic3() {
+                this.playMusicLoop([
+                    [116.54, 146.83, 174.61],
+                    [103.83, 130.81, 155.56],
+                    [110, 138.59, 164.81],
+                    [98, 123.47, 146.83]
+                ], 8, 'square');
+            }
+
+            createLevelMusic4() {
+                this.playMusicLoop([
+                    [146.83, 185, 220],
+                    [164.81, 207.65, 246.94],
+                    [174.61, 220, 261.63],
+                    [185, 233.08, 277.18]
+                ], 9, 'sine');
+            }
+
+            createLevelMusic5() {
+                this.playMusicLoop([
+                    [82.41, 103.83, 130.81],
+                    [87.31, 110, 138.59],
+                    [92.50, 116.54, 146.83],
+                    [98, 123.47, 155.56]
+                ], 14, 'sawtooth');
+            }
+
+            playMusicLoop(chords, duration, waveType) {
+                if (!this.audioContext || !this.isEnabled) return;
+                
+                const playLoop = () => {
+                    if (!this.isEnabled || !this.audioContext) return;
+                    
+                    this.musicOscillators.forEach(osc => {
+                        try { osc.stop(); } catch(e) {}
+                    });
+                    this.musicOscillators = [];
+                    
+                    const now = this.audioContext.currentTime;
+                    
+                    chords.forEach((chord, chordIndex) => {
+                        const chordTime = now + (chordIndex * duration / 4);
+                        
+                        chord.forEach((freq, noteIndex) => {
+                            const osc = this.audioContext.createOscillator();
+                            const gain = this.audioContext.createGain();
+                            
+                            osc.connect(gain);
+                            gain.connect(this.musicGain);
+                            
+                            osc.frequency.setValueAtTime(freq, chordTime);
+                            osc.type = waveType;
+                            
+                            const volume = 0.04 + (noteIndex * 0.01);
+                            gain.gain.setValueAtTime(0, chordTime);
+                            gain.gain.linearRampToValueAtTime(volume, chordTime + 0.1);
+                            gain.gain.exponentialRampToValueAtTime(0.01, chordTime + duration / 4 - 0.1);
+                            gain.gain.linearRampToValueAtTime(0.001, chordTime + duration / 4);
+                            
+                            osc.start(chordTime);
+                            osc.stop(chordTime + duration / 4);
+                            
+                            this.musicOscillators.push(osc);
+                        });
+                    });
+                    
+                    setTimeout(() => playLoop(), duration * 1000);
+                };
+                
+                playLoop();
+            }
+
+            stopMusic() {
+                this.musicOscillators.forEach(osc => {
+                    try { osc.stop(); } catch(e) {}
+                });
+                this.musicOscillators = [];
+            }
+
             startBackgroundMusic() {
                 if (!this.audioContext || !this.isEnabled) return;
                 
                 const playMusicLoop = () => {
-                    if (!this.isEnabled || !this.audioContext) return;
+                    if (!this.isEnabled || !this.audioContext || this.currentMusicLevel > 0) return;
                     
                     this.musicOscillators.forEach(osc => {
                         try { osc.stop(); } catch(e) {}
@@ -1688,10 +1910,10 @@
                     const duration = 12;
                     
                     const chords = [
-                        [110, 146.83, 174.61], // Am
-                        [87.31, 130.81, 174.61], // F
-                        [130.81, 164.81, 196], // C
-                        [98, 146.83, 185] // G
+                        [110, 146.83, 174.61],
+                        [87.31, 130.81, 174.61],
+                        [130.81, 164.81, 196],
+                        [98, 146.83, 185]
                     ];
                     
                     chords.forEach((chord, chordIndex) => {
@@ -1731,11 +1953,58 @@
                 this.sounds = {
                     jump: () => this.createBeep(450, 0.12, 'square', [450, 650]),
                     collect: () => this.createMelody([523, 659, 784, 1047], 0.08),
-                    hit: () => this.createNoise(0.25),
+                    hit: () => this.createDeathSound(), // NUOVO SUONO MORTE
                     complete: () => this.createMelody([523, 659, 784, 1047, 1319], 0.2),
                     button: () => this.createBeep(800, 0.06, 'triangle'),
                     levelStart: () => this.createMelody([392, 523, 659], 0.15)
                 };
+            }
+
+            // NUOVO: Suono specifico per la morte del giocatore
+            createDeathSound() {
+                if (!this.audioContext || !this.isEnabled) return;
+                
+                // Suono drammatico di morte con sweep discendente
+                const osc1 = this.audioContext.createOscillator();
+                const osc2 = this.audioContext.createOscillator();
+                const gain1 = this.audioContext.createGain();
+                const gain2 = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
+                
+                osc1.connect(gain1);
+                osc2.connect(gain2);
+                gain1.connect(filter);
+                gain2.connect(filter);
+                filter.connect(this.sfxGain);
+                
+                // Primo oscillatore: sweep drammatico
+                osc1.frequency.setValueAtTime(800, this.audioContext.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(200, this.audioContext.currentTime + 0.8);
+                osc1.type = 'sawtooth';
+                
+                // Secondo oscillatore: effetto distortion
+                osc2.frequency.setValueAtTime(400, this.audioContext.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.8);
+                osc2.type = 'square';
+                
+                // Filtro passa-basso per effetto drammatico
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(2000, this.audioContext.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(300, this.audioContext.currentTime + 0.8);
+                
+                // Envelope dei volumi
+                gain1.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gain1.gain.linearRampToValueAtTime(0.3, this.audioContext.currentTime + 0.05);
+                gain1.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.8);
+                
+                gain2.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gain2.gain.linearRampToValueAtTime(0.15, this.audioContext.currentTime + 0.1);
+                gain2.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.8);
+                
+                osc1.start();
+                osc2.start();
+                osc1.stop(this.audioContext.currentTime + 0.8);
+                osc2.stop(this.audioContext.currentTime + 0.8);
             }
 
             createBeep(frequency, duration, type = 'sine', sweep = null) {
@@ -1762,35 +2031,6 @@
                 osc.stop(this.audioContext.currentTime + duration);
             }
 
-            createNoise(duration) {
-                if (!this.audioContext || !this.isEnabled) return;
-                
-                const bufferSize = this.audioContext.sampleRate * duration;
-                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-                const output = buffer.getChannelData(0);
-                
-                for (let i = 0; i < bufferSize; i++) {
-                    output[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-                }
-                
-                const source = this.audioContext.createBufferSource();
-                const gain = this.audioContext.createGain();
-                const filter = this.audioContext.createBiquadFilter();
-                
-                source.buffer = buffer;
-                source.connect(filter);
-                filter.connect(gain);
-                gain.connect(this.sfxGain);
-                
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(500, this.audioContext.currentTime);
-                
-                gain.gain.setValueAtTime(0.15, this.audioContext.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration);
-                
-                source.start();
-            }
-
             createMelody(frequencies, noteDuration) {
                 if (!this.audioContext || !this.isEnabled) return;
                 
@@ -1814,12 +2054,13 @@
                 }
                 
                 if (!this.isEnabled) {
-                    this.musicOscillators.forEach(osc => {
-                        try { osc.stop(); } catch(e) {}
-                    });
-                    this.musicOscillators = [];
+                    this.stopMusic();
                 } else {
-                    setTimeout(() => this.startBackgroundMusic(), 100);
+                    if (this.currentMusicLevel > 0) {
+                        this.startLevelMusic(this.currentMusicLevel);
+                    } else {
+                        setTimeout(() => this.startBackgroundMusic(), 100);
+                    }
                 }
                 
                 const btn = document.getElementById('audioToggle');
@@ -1836,7 +2077,172 @@
             }
         }
 
-        // Story System Manager - SEMPLIFICATO
+        // High-Performance Rendering Engine con WebGL
+        class RenderEngine {
+            constructor() {
+                this.canvas = null;
+                this.ctx = null;
+                this.webglSupported = false;
+                this.performanceMode = this.detectPerformanceMode();
+                this.init();
+            }
+
+            detectPerformanceMode() {
+                const ua = navigator.userAgent;
+                const isOldDevice = /Android [1-4]|iPhone OS [1-9]_|CPU OS [1-9]_/.test(ua);
+                const isLowRAM = navigator.deviceMemory && navigator.deviceMemory < 2;
+                const isSlowCPU = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
+                
+                if (isOldDevice || isLowRAM || isSlowCPU) {
+                    return 'low';
+                }
+                
+                return 'high';
+            }
+
+            init() {
+                try {
+                    this.canvas = document.createElement('canvas');
+                    this.canvas.style.cssText = `
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        pointer-events: none;
+                        z-index: 5;
+                    `;
+                    
+                    const gl = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
+                    if (gl) {
+                        this.webglSupported = true;
+                        this.setupWebGL(gl);
+                        console.log('🚀 WebGL Renderer attivato');
+                    } else {
+                        this.ctx = this.canvas.getContext('2d');
+                        console.log('📱 Canvas 2D Renderer (WebGL non supportato)');
+                    }
+                    
+                    this.resizeCanvas();
+                    window.addEventListener('resize', () => this.resizeCanvas());
+                    
+                } catch (error) {
+                    console.warn('Render engine initialization failed:', error);
+                }
+            }
+
+            setupWebGL(gl) {
+                this.gl = gl;
+                
+                const vertexShaderSource = `
+                    attribute vec2 a_position;
+                    attribute vec3 a_color;
+                    uniform vec2 u_resolution;
+                    varying vec3 v_color;
+                    
+                    void main() {
+                        vec2 position = ((a_position / u_resolution) * 2.0) - 1.0;
+                        gl_Position = vec4(position * vec2(1, -1), 0, 1);
+                        v_color = a_color;
+                        gl_PointSize = 3.0;
+                    }
+                `;
+
+                const fragmentShaderSource = `
+                    precision mediump float;
+                    varying vec3 v_color;
+                    
+                    void main() {
+                        gl_FragColor = vec4(v_color, 0.8);
+                    }
+                `;
+
+                const vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+                const fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+                
+                if (vertexShader && fragmentShader) {
+                    this.program = this.createProgram(gl, vertexShader, fragmentShader);
+                }
+            }
+
+            createShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    console.warn('Shader compile error:', gl.getShaderInfoLog(shader));
+                    gl.deleteShader(shader);
+                    return null;
+                }
+                
+                return shader;
+            }
+
+            createProgram(gl, vertexShader, fragmentShader) {
+                const program = gl.createProgram();
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                gl.linkProgram(program);
+                
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.warn('Program link error:', gl.getProgramInfoLog(program));
+                    gl.deleteProgram(program);
+                    return null;
+                }
+                
+                return program;
+            }
+
+            resizeCanvas() {
+                if (!this.canvas) return;
+                
+                const worldEl = document.getElementById('world');
+                if (!worldEl) return;
+                
+                const rect = worldEl.getBoundingClientRect();
+                this.canvas.width = rect.width;
+                this.canvas.height = rect.height;
+                
+                if (this.gl) {
+                    this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+                }
+            }
+
+            renderParticles(particles) {
+                if (!this.webglSupported || !this.gl || !this.program) return;
+                
+                if (this.performanceMode === 'low') return;
+                
+                const gl = this.gl;
+                gl.useProgram(this.program);
+                
+                gl.clearColor(0, 0, 0, 0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                
+                particles.forEach(particle => {
+                    gl.drawArrays(gl.POINTS, 0, 1);
+                });
+            }
+
+            setQualityMode(mode) {
+                this.performanceMode = mode;
+                
+                if (mode === 'low') {
+                    document.documentElement.style.setProperty('--animation-speed', '0.5s');
+                    const effects = document.querySelectorAll('.energy-wave, .collectible, .enemy');
+                    effects.forEach(el => {
+                        el.style.animationDuration = '4s';
+                    });
+                } else {
+                    document.documentElement.style.setProperty('--animation-speed', '1s');
+                }
+            }
+        }
+
+        // Story System Manager
         class StoryManager {
             constructor() {
                 this.stories = {
@@ -1971,13 +2377,13 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.maxLevels = 5;
                 this.isPaused = false;
                 
-                // Player system
                 this.player = {
                     x: 50, y: 300, vx: 0, vy: 0,
                     width: 40, height: 40,
                     onGround: false, canJump: true,
                     energy: 3, 
-                    name: '', coyoteTime: 0
+                    name: '', coyoteTime: 0,
+                    isDying: false // NUOVO: flag per animazione morte
                 };
                 
                 this.camera = { x: 0, targetX: 0 };
@@ -1991,9 +2397,8 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.gravity = 0.8;
                 this.friction = 0.88;
                 
-                // Fix per il bug del messaggio del portale
                 this.lastGoalMessage = 0;
-                this.goalMessageCooldown = 2000; // 2 secondi
+                this.goalMessageCooldown = 2000;
                 
                 // Performance optimization
                 this.lastRenderTime = 0;
@@ -2005,6 +2410,7 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
 
                 this.story = new StoryManager();
                 this.audioManager = new AudioManager();
+                this.renderEngine = new RenderEngine();
                 this.setupEventListeners();
                 this.setupMobileControls();
                 this.initBackground();
@@ -2066,7 +2472,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     });
                 }
 
-                // Resume audio context on first interaction
                 document.addEventListener('click', () => {
                     this.audioManager.resumeContext();
                 }, { once: true });
@@ -2114,12 +2519,24 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             startLevel() {
+                document.body.classList.add('game-active');
+                
                 this.loadLevel();
                 this.showScreen('gameScreen');
                 this.state = 'playing';
                 this.isPaused = false;
                 this.running = true;
+                
+                this.audioManager.startLevelMusic(this.currentLevel);
                 this.audioManager.playSound('levelStart');
+                
+                if (this.renderEngine && this.renderEngine.canvas) {
+                    const world = document.getElementById('world');
+                    if (world && !world.contains(this.renderEngine.canvas)) {
+                        world.appendChild(this.renderEngine.canvas);
+                    }
+                }
+                
                 this.gameLoop();
             }
 
@@ -2145,7 +2562,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             showRestartConfirmation() {
-                // Crea overlay di conferma
                 const confirmOverlay = document.createElement('div');
                 confirmOverlay.id = 'restartConfirmOverlay';
                 confirmOverlay.style.cssText = `
@@ -2222,12 +2638,10 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 confirmOverlay.appendChild(confirmContent);
                 document.body.appendChild(confirmOverlay);
 
-                // Animazione di entrata
                 setTimeout(() => {
                     confirmOverlay.style.opacity = '1';
                 }, 10);
 
-                // Event listeners per i pulsanti
                 document.getElementById('confirmRestart').addEventListener('click', () => {
                     this.audioManager.playSound('button');
                     this.hideRestartConfirmation();
@@ -2239,7 +2653,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     this.hideRestartConfirmation();
                 });
 
-                // Chiudi con ESC
                 const escapeHandler = (e) => {
                     if (e.key === 'Escape') {
                         this.audioManager.playSound('button');
@@ -2263,26 +2676,21 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             performFullRestart() {
-                // Pausa il gioco
                 this.isPaused = false;
                 this.running = false;
                 
-                // Chiudi overlay di pausa se aperto
                 if (document.getElementById('pauseOverlay').classList.contains('active')) {
                     document.getElementById('pauseOverlay').classList.remove('active');
                 }
                 
-                // Reset completo del gioco
                 this.currentLevel = 1;
                 this.score = 0;
                 this.player.energy = 3;
                 this.startTime = Date.now();
                 this.state = 'story';
                 
-                // Messaggio di conferma
                 this.showMessage('🔄 Gioco riavviato! Iniziando dal Livello 1...');
                 
-                // Mostra la storia del primo livello
                 setTimeout(() => {
                     this.story.showStory(1, 'intro');
                 }, 500);
@@ -2437,10 +2845,10 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.player.vx = 0;
                 this.player.vy = 0;
                 this.player.onGround = false;
+                this.player.isDying = false; // Reset flag morte
                 this.camera.x = 0;
                 this.camera.targetX = 0;
                 
-                // Reset goal message cooldown
                 this.lastGoalMessage = 0;
 
                 level.platforms.forEach(p => {
@@ -2508,7 +2916,7 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             update(deltaTime) {
-                if (this.isPaused) return;
+                if (this.isPaused || this.player.isDying) return; // Blocca update durante morte
                 
                 this.gameTime = Date.now() - this.startTime;
                 this.updateCounter++;
@@ -2529,6 +2937,8 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
 
             updatePlayer(deltaTime) {
                 const p = this.player;
+                if (p.isDying) return; // Blocca movimento durante morte
+                
                 const speed = 7.5;
                 const jumpPower = 18;
                 const acceleration = 2.0;
@@ -2599,8 +3009,11 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     p.x = 0;
                     p.vx = 0;
                 }
-                if (p.x + p.width > this.worldWidth) {
-                    p.x = this.worldWidth - p.width;
+                
+                // FIX MOBILE: Migliore gestione larghezza mondo
+                const effectiveWorldWidth = window.innerWidth <= 480 ? this.worldWidth * 0.75 : this.worldWidth;
+                if (p.x + p.width > effectiveWorldWidth) {
+                    p.x = effectiveWorldWidth - p.width;
                     p.vx = 0;
                 }
 
@@ -2665,7 +3078,12 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             updateCamera(deltaTime) {
-                const target = Math.max(0, Math.min(this.player.x - 400, this.worldWidth - 800));
+                // Fix camera per mobile
+                const isMobile = window.innerWidth <= 768;
+                const viewportWidth = isMobile ? window.innerWidth : 800;
+                const effectiveWorldWidth = isMobile && window.innerWidth <= 480 ? this.worldWidth * 0.75 : this.worldWidth;
+                
+                const target = Math.max(0, Math.min(this.player.x - viewportWidth/2, effectiveWorldWidth - viewportWidth));
                 this.camera.targetX = target;
                 this.camera.x += (this.camera.targetX - this.camera.x) * 0.12;
             }
@@ -2681,8 +3099,8 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
 
             checkCollisions() {
                 const p = this.player;
+                if (p.isDying) return; // Blocca collisioni durante morte
 
-                // Rimuovo completamente la logica di invulnerabilità - il giocatore può morire subito
                 this.entities.filter(e => e.type === 'collectible' && !e.collected).forEach((crystal) => {
                     const distance = Math.sqrt(
                         Math.pow(p.x + p.width/2 - (crystal.x + crystal.w/2), 2) + 
@@ -2712,7 +3130,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     if (collected === total) {
                         this.levelComplete();
                     } else {
-                        // Fix: messaggio portale solo una volta ogni 2 secondi
                         const now = Date.now();
                         if (now - this.lastGoalMessage > this.goalMessageCooldown) {
                             this.showMessage(`Raccogli tutti i cristalli! (${collected}/${total})`);
@@ -2748,24 +3165,57 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                        a.y + a.height > b.y;
             }
 
+            // NUOVA FUNZIONE: Gestione morte con animazione
             playerDie() {
-                this.player.energy--;
-                this.audioManager.playSound('hit');
+                if (this.player.isDying) return; // Previeni multiple morti
                 
-                if (this.player.energy <= 0) {
-                    this.gameOver();
-                } else {
-                    // Respawn immediato senza timer di invulnerabilità
-                    this.player.x = 50;
-                    this.player.y = 400;
-                    this.player.vx = 0;
-                    this.player.vy = 0;
-                    this.camera.x = 0;
-                    this.camera.targetX = 0;
+                this.player.isDying = true;
+                this.audioManager.playSound('hit'); // Nuovo suono drammatico
+                
+                // Aggiungi classe CSS per animazione
+                const playerElements = document.querySelectorAll('.player');
+                playerElements.forEach(el => el.classList.add('dying'));
+                
+                // Messaggio morte
+                this.showMessage(`💥 Colpito! Energia: ${this.player.energy - 1}/3`);
+                
+                // Dopo animazione (800ms), procedi con respawn o game over
+                setTimeout(() => {
+                    this.player.energy--;
                     
-                    this.updateHUD();
-                    this.showMessage(`💔 Energia rimasta: ${this.player.energy}`);
-                }
+                    if (this.player.energy <= 0) {
+                        this.gameOver();
+                    } else {
+                        this.respawnPlayer();
+                    }
+                }, 800);
+            }
+
+            // NUOVA FUNZIONE: Respawn del giocatore
+            respawnPlayer() {
+                // Reset posizione e stato
+                this.player.x = 50;
+                this.player.y = 400;
+                this.player.vx = 0;
+                this.player.vy = 0;
+                this.player.isDying = false;
+                this.camera.x = 0;
+                this.camera.targetX = 0;
+                
+                // Rimuovi classe animazione morte
+                const playerElements = document.querySelectorAll('.player');
+                playerElements.forEach(el => {
+                    el.classList.remove('dying');
+                    el.classList.add('respawning');
+                });
+                
+                // Rimuovi classe respawn dopo 1 secondo
+                setTimeout(() => {
+                    const playerElements = document.querySelectorAll('.player');
+                    playerElements.forEach(el => el.classList.remove('respawning'));
+                }, 1000);
+                
+                this.updateHUD();
             }
 
             levelComplete() {
@@ -2939,8 +3389,13 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     top: ${this.player.y}px;
                 `;
                 
-                if (Math.abs(this.player.vx) > 1) {
+                if (Math.abs(this.player.vx) > 1 && !this.player.isDying) {
                     playerEl.classList.add('moving');
+                }
+                
+                // Mantieni classe dying se necessario
+                if (this.player.isDying) {
+                    playerEl.classList.add('dying');
                 }
                 
                 fragment.appendChild(playerEl);
@@ -3038,12 +3493,22 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             showScreen(screenId) {
+                if (screenId === 'mainMenu') {
+                    document.body.classList.remove('game-active');
+                }
+                
                 document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                 setTimeout(() => {
                     const screen = document.getElementById(screenId);
                     if (screen) screen.classList.add('active');
                 }, 100);
                 this.state = screenId === 'mainMenu' ? 'menu' : this.state;
+                
+                if (screenId === 'mainMenu') {
+                    this.audioManager.currentMusicLevel = 0;
+                    this.audioManager.stopMusic();
+                    setTimeout(() => this.audioManager.startBackgroundMusic(), 500);
+                }
             }
 
             showOverlay() {
@@ -3136,7 +3601,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     this.game.audioManager.playSound('button');
                     this.game.story.hideStory();
                     
-                    // Controlla se è una storia di inizio livello
                     const storyTitle = document.getElementById('storyTitle').textContent;
                     if (storyTitle.includes('INIZIA MISSIONE') || storyTitle.includes('IL RISVEGLIO') || 
                         storyTitle.includes('LE ISOLE FLUTTUANTI') || storyTitle.includes('IL GUANTO DI SFIDA') || 
@@ -3193,6 +3657,22 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             toggleAudio() {
                 if (this.game && this.game.audioManager) {
                     this.game.audioManager.toggle();
+                }
+            }
+
+            toggleQuality() {
+                if (this.game && this.game.renderEngine) {
+                    const currentMode = this.game.renderEngine.performanceMode;
+                    const newMode = currentMode === 'high' ? 'low' : 'high';
+                    this.game.renderEngine.setQualityMode(newMode);
+                    
+                    const btn = document.getElementById('qualityToggle');
+                    if (btn) {
+                        btn.className = newMode === 'low' ? 'quality-btn low-quality' : 'quality-btn';
+                        btn.title = newMode === 'low' ? 'Qualità: Bassa' : 'Qualità: Alta';
+                    }
+                    
+                    this.showNotification(`Qualità: ${newMode === 'high' ? 'Alta' : 'Bassa'}`);
                 }
             }
 
@@ -3282,6 +3762,12 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
         }
 
+        function toggleQuality() {
+            if (gameManager) {
+                gameManager.toggleQuality();
+            }
+        }
+
         function nextAction() {
             if (gameManager) {
                 gameManager.nextAction();
@@ -3307,7 +3793,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
         document.addEventListener('DOMContentLoaded', () => {
             initializeGame();
             
-            // Add button sound effects
             document.addEventListener('click', (e) => {
                 if (e.target.matches('.btn, .neo-btn, .audio-btn, .launch-button') || e.target.closest('.neo-btn')) {
                     if (gameManager && gameManager.game && gameManager.game.audioManager) {
