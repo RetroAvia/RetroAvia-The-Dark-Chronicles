@@ -2,10 +2,26 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
     <title>RetroAvia - The Dark Chronicles</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        /* Font Imports - Embedded per evitare errori CORS */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+        
+        /* Fallback fonts nel caso i Google Fonts non si carichino */
+        @font-face {
+            font-family: 'Orbitron-Fallback';
+            src: local('Courier New'), local('monospace');
+            font-weight: 400 900;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Rajdhani-Fallback';
+            src: local('Arial'), local('Helvetica'), local('sans-serif');
+            font-weight: 300 600;
+            font-display: swap;
+        }
         :root {
             --neon-blue: #00d4ff;
             --neon-purple: #8b5cf6;
@@ -32,7 +48,7 @@
 
         body {
             background: var(--dark-bg);
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Rajdhani', 'Rajdhani-Fallback', Arial, sans-serif;
             color: #ffffff;
             overflow: hidden;
             user-select: none;
@@ -144,7 +160,7 @@
 
         /* Logo compatto */
         .retro-logo {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 900;
             text-align: center;
@@ -248,7 +264,7 @@
         }
 
         .card-title {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: 0.9rem;
             font-weight: 700;
             margin-bottom: 8px;
@@ -376,7 +392,7 @@
             border-radius: 12px;
             color: white;
             padding: 15px 25px;
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-weight: 700;
             font-size: 0.9rem;
             z-index: 600;
@@ -412,7 +428,7 @@
             border: none;
             color: white;
             padding: 12px 25px;
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
@@ -479,7 +495,7 @@
         }
 
         .story-title {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: 2rem;
             font-weight: 900;
             margin-bottom: 20px;
@@ -628,7 +644,7 @@
         }
 
         .player-name {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-weight: 700;
             font-size: 0.85rem;
             color: var(--neon-blue);
@@ -692,7 +708,7 @@
         }
 
         .metric-value {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-weight: 700;
             font-size: 0.9rem;
             text-shadow: 0 0 4px currentColor;
@@ -816,7 +832,7 @@
             border: 1px solid;
             color: white;
             padding: 8px 10px;
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: 0.7rem;
             font-weight: 600;
             cursor: pointer;
@@ -1153,7 +1169,7 @@
         }
 
         .overlay-title {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: 1.8rem;
             font-weight: 900;
             margin-bottom: 15px;
@@ -1198,7 +1214,7 @@
         }
 
         .pause-title {
-            font-family: 'Orbitron', monospace;
+            font-family: 'Orbitron', 'Orbitron-Fallback', 'Courier New', monospace;
             font-size: 2rem;
             font-weight: 900;
             margin-bottom: 20px;
@@ -1206,48 +1222,12 @@
             text-shadow: var(--glow) var(--neon-red);
         }
 
-        /* Story buttons and countdown */
+        /* Story buttons - SEMPLIFICATI */
         .story-buttons {
             display: flex;
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
-        }
-
-        .auto-continue {
-            background: var(--glass);
-            border: 2px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 10px 18px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            animation: pulse 2s infinite;
-            font-family: 'Orbitron', monospace;
-            font-weight: 700;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        .read-more {
-            background: var(--glass);
-            border: 2px solid var(--neon-blue);
-            color: var(--neon-blue);
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin-top: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .read-more:hover {
-            background: var(--neon-blue);
-            color: white;
         }
 
         /* Animazioni */
@@ -1282,100 +1262,188 @@
             100% { transform: scale(2); opacity: 0; }
         }
 
-        /* RESPONSIVE DESIGN */
+        /* RESPONSIVE DESIGN MIGLIORATO */
         @media (max-width: 768px) {
-            .mobile-controls { display: flex; }
+            body {
+                transform: scale(1);
+                transform-origin: center;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .mobile-controls { 
+                display: flex; 
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
             
             .hud-layout { 
                 grid-template-columns: 1fr auto;
                 grid-template-rows: auto auto auto;
-                gap: 8px;
-                padding: 8px 15px;
+                gap: 6px;
+                padding: 6px 12px;
             }
             
             .player-panel {
                 grid-column: 1 / -1;
                 grid-row: 1;
-                padding: 6px 10px;
+                padding: 5px 8px;
             }
             
             .game-dashboard {
                 grid-column: 1;
                 grid-row: 2;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
+                gap: 6px;
             }
             
             .control-cluster {
                 grid-column: 2;
                 grid-row: 2;
                 align-self: center;
-                gap: 4px;
+                gap: 3px;
             }
             
             .energy-system {
                 grid-column: 1 / -1;
                 grid-row: 3;
-                padding: 6px 10px;
+                padding: 5px 8px;
             }
 
             .futuristic-hud { 
                 height: auto;
-                min-height: 80px;
+                min-height: 75px;
             }
 
             .neo-btn { 
-                padding: 6px 8px; 
-                font-size: 0.65rem; 
-                min-width: 32px;
+                padding: 5px 7px; 
+                font-size: 0.6rem; 
+                min-width: 30px;
             }
 
             .metric-card { 
-                padding: 5px 8px; 
+                padding: 4px 6px; 
             }
 
             .metric-value {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
 
             .metric-label {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
+            }
+
+            .player-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+
+            .player-name {
+                font-size: 0.75rem;
+            }
+
+            .player-level {
+                font-size: 0.65rem;
             }
 
             /* Menu mobile ottimizzato */
             .mission-cards {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 10px;
             }
             
             .mission-card {
-                padding: 12px;
+                padding: 10px;
             }
             
             .retro-logo .retro-text {
-                font-size: clamp(2rem, 10vw, 3.5rem);
+                font-size: clamp(1.8rem, 8vw, 3rem);
             }
             
             .dark-chronicles {
-                font-size: clamp(0.8rem, 3vw, 1rem);
+                font-size: clamp(0.7rem, 2.5vw, 0.9rem);
                 letter-spacing: 1px;
             }
             
             .briefing-intro {
-                font-size: 0.9rem;
-                padding: 0 10px;
+                font-size: 0.85rem;
+                padding: 0 8px;
             }
             
             .futuristic-input {
-                font-size: 0.9rem;
-                padding: 10px 15px;
-                max-width: 300px;
+                font-size: 0.85rem;
+                padding: 8px 12px;
+                max-width: 280px;
             }
             
             .launch-button {
+                font-size: 0.85rem;
+                padding: 8px 20px;
+                min-width: 180px;
+            }
+
+            .story-content {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .story-title {
+                font-size: 1.5rem;
+            }
+
+            .story-text {
                 font-size: 0.9rem;
-                padding: 10px 25px;
-                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hud-layout {
+                padding: 4px 8px;
+                gap: 4px;
+            }
+
+            .control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+
+            .neo-btn {
+                padding: 4px 6px;
+                font-size: 0.55rem;
+                min-width: 28px;
+            }
+
+            .player-panel,
+            .energy-system {
+                padding: 4px 6px;
+            }
+
+            .metric-card {
+                padding: 3px 5px;
+            }
+
+            .story-content {
+                padding: 15px;
+            }
+
+            .futuristic-input {
+                max-width: 250px;
+                padding: 6px 10px;
+            }
+
+            .launch-button {
+                min-width: 160px;
+                padding: 6px 16px;
             }
         }
     </style>
@@ -1393,13 +1461,7 @@
             <div id="storyTitle" class="story-title">LIVELLO 1</div>
             <div id="storyText" class="story-text">Loading story...</div>
             <div class="story-buttons">
-                <button id="storyActionBtn" class="btn" onclick="handleStoryAction()">INIZIA MISSIONE</button>
-            </div>
-            <div id="readMore" class="read-more" style="display: none;" onclick="toggleReadMode()">
-                📖 Leggi con calma (disattiva countdown)
-            </div>
-            <div id="autoContinue" class="auto-continue" style="display: none;">
-                Prossimo livello tra <span id="countdown">5</span> secondi...
+                <button id="storyActionBtn" class="btn" onclick="handleStoryAction()">CONTINUA</button>
             </div>
         </div>
     </div>
@@ -1413,7 +1475,7 @@
             </p>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <button class="btn" onclick="resumeGame()">▶️ RIPRENDI</button>
-                <button class="btn" onclick="restartLevel()">🔄 RIAVVIA LIVELLO</button>
+                <button class="btn" onclick="restartGame()">🔄 RIAVVIA GIOCO</button>
                 <button class="btn" style="background: linear-gradient(45deg, var(--neon-orange), var(--neon-red));" onclick="goHomeFromPause()">🏠 MENU PRINCIPALE</button>
             </div>
         </div>
@@ -1521,7 +1583,7 @@
                         <div class="control-cluster">
                             <button class="neo-btn home-btn" onclick="goHome()" title="Torna al menu">🏠</button>
                             <button class="neo-btn pause-btn" onclick="pauseGame()" title="Pausa (P)">⏸️</button>
-                            <button class="neo-btn restart-btn" onclick="restartLevel()" title="Riavvia (R)">🔄</button>
+                            <button class="neo-btn restart-btn" onclick="restartGame()" title="Riavvia Gioco (R)">🔄</button>
                         </div>
                         
                         <!-- Energy System -->
@@ -1774,12 +1836,9 @@
             }
         }
 
-        // Story System Manager
+        // Story System Manager - SEMPLIFICATO
         class StoryManager {
             constructor() {
-                this.currentStoryType = null;
-                this.countdownTimer = null;
-                this.readingMode = false;
                 this.stories = {
                     intro1: {
                         title: "🌌 DIMENSIONE ALPHA - IL RISVEGLIO",
@@ -1799,7 +1858,7 @@ Ma questo è solo l'inizio. I sensori rilevano anomalie ancora più gravi nelle 
 
 Preparati per la Dimensione Beta, dove la gravità sfida le leggi della fisica...`,
                         level: 1,
-                        actionText: null
+                        actionText: "CONTINUA"
                     },
                     intro2: {
                         title: "🌊 DIMENSIONE BETA - LE ISOLE FLUTTUANTI",
@@ -1819,7 +1878,7 @@ Ma attenzione: i rapporti indicano che la prossima dimensione è controllata da 
 
 Il Guanto di Sfida ti aspetta, dove ogni passo potrebbe essere l'ultimo...`,
                         level: 2,
-                        actionText: null
+                        actionText: "CONTINUA"
                     },
                     intro3: {
                         title: "⚔️ DIMENSIONE GAMMA - IL GUANTO DI SFIDA",
@@ -1839,7 +1898,7 @@ Come ricompensa per il tuo coraggio, hai sbloccato un codice sconto speciale per
 
 Ma la guerra non è finita. Le dimensioni finali ti aspettano con sfide che metteranno alla prova ogni fibra del tuo essere.`,
                         level: 3,
-                        actionText: null
+                        actionText: "CONTINUA"
                     },
                     intro4: {
                         title: "🎯 DIMENSIONE DELTA - PRECISIONE ASSOLUTA",
@@ -1859,7 +1918,7 @@ Rimane un'ultima sfida. La Dimensione Omega, dove risiede l'Entità Suprema Corr
 
 L'ultima battaglia ti attende nel cuore delle tenebre...`,
                         level: 4,
-                        actionText: null
+                        actionText: "CONTINUA"
                     },
                     intro5: {
                         title: "💀 DIMENSIONE OMEGA - LO SCONTRO FINALE",
@@ -1879,7 +1938,7 @@ Il tuo nome risuonerà per l'eternità in ogni dimensione. Sei diventato il Salv
 
 Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria eterna nella storia interdimensionale!`,
                         level: 5,
-                        actionText: null
+                        actionText: "CONTINUA"
                     }
                 };
             }
@@ -1887,8 +1946,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             showStory(level, type = 'intro') {
                 const key = type + level;
                 const story = this.stories[key];
-                this.currentStoryType = type;
-                this.readingMode = false;
                 
                 if (!story) return;
 
@@ -1896,96 +1953,13 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 document.getElementById('storyText').textContent = story.text;
                 
                 const actionBtn = document.getElementById('storyActionBtn');
-                const autoContinue = document.getElementById('autoContinue');
-                const readMore = document.getElementById('readMore');
-                
-                if (story.actionText) {
-                    actionBtn.textContent = story.actionText;
-                    actionBtn.style.display = 'block';
-                    autoContinue.style.display = 'none';
-                    readMore.style.display = 'none';
-                } else {
-                    actionBtn.style.display = 'none';
-                    autoContinue.style.display = 'block';
-                    readMore.style.display = 'block';
-                    this.startAutoCountdown();
-                }
+                actionBtn.textContent = story.actionText;
                 
                 document.getElementById('storyOverlay').classList.add('active');
             }
 
-            startAutoCountdown() {
-                let seconds = 5;
-                const countdownEl = document.getElementById('countdown');
-                
-                const updateCountdown = () => {
-                    if (this.readingMode) return;
-                    
-                    if (countdownEl) countdownEl.textContent = seconds;
-                    
-                    if (seconds <= 0) {
-                        this.hideStory();
-                        if (gameManager && gameManager.game) {
-                            gameManager.game.processNextAction();
-                        }
-                        return;
-                    }
-                    
-                    seconds--;
-                    this.countdownTimer = setTimeout(updateCountdown, 1000);
-                };
-                
-                updateCountdown();
-            }
-
-            toggleReadingMode() {
-                this.readingMode = !this.readingMode;
-                const readMore = document.getElementById('readMore');
-                const autoContinue = document.getElementById('autoContinue');
-                
-                if (this.readingMode) {
-                    if (this.countdownTimer) {
-                        clearTimeout(this.countdownTimer);
-                        this.countdownTimer = null;
-                    }
-                    readMore.textContent = '⏰ Riattiva countdown';
-                    readMore.style.borderColor = 'var(--neon-green)';
-                    readMore.style.color = 'var(--neon-green)';
-                    autoContinue.style.display = 'none';
-                    
-                    const manualBtn = document.createElement('button');
-                    manualBtn.id = 'manualContinueBtn';
-                    manualBtn.className = 'btn';
-                    manualBtn.textContent = '➡️ CONTINUA';
-                    manualBtn.onclick = () => {
-                        this.hideStory();
-                        if (gameManager && gameManager.game) {
-                            gameManager.game.processNextAction();
-                        }
-                    };
-                    readMore.parentNode.appendChild(manualBtn);
-                } else {
-                    readMore.textContent = '📖 Leggi con calma (disattiva countdown)';
-                    readMore.style.borderColor = 'var(--neon-blue)';
-                    readMore.style.color = 'var(--neon-blue)';
-                    autoContinue.style.display = 'block';
-                    
-                    const manualBtn = document.getElementById('manualContinueBtn');
-                    if (manualBtn) manualBtn.remove();
-                    
-                    this.startAutoCountdown();
-                }
-            }
-
             hideStory() {
-                if (this.countdownTimer) {
-                    clearTimeout(this.countdownTimer);
-                    this.countdownTimer = null;
-                }
                 document.getElementById('storyOverlay').classList.remove('active');
-                
-                const manualBtn = document.getElementById('manualContinueBtn');
-                if (manualBtn) manualBtn.remove();
             }
         }
 
@@ -2003,11 +1977,7 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     width: 40, height: 40,
                     onGround: false, canJump: true,
                     energy: 3, 
-                    invulnerabilityFrames: 0,
-                    invulnerabilityDuration: 180,
-                    name: '', coyoteTime: 0,
-                    isRespawning: false,
-                    respawnTimer: 0
+                    name: '', coyoteTime: 0
                 };
                 
                 this.camera = { x: 0, targetX: 0 };
@@ -2020,6 +1990,10 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.worldWidth = 1800;
                 this.gravity = 0.8;
                 this.friction = 0.88;
+                
+                // Fix per il bug del messaggio del portale
+                this.lastGoalMessage = 0;
+                this.goalMessageCooldown = 2000; // 2 secondi
                 
                 // Performance optimization
                 this.lastRenderTime = 0;
@@ -2167,18 +2141,151 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             restartLevel() {
+                this.showRestartConfirmation();
+            }
+
+            showRestartConfirmation() {
+                // Crea overlay di conferma
+                const confirmOverlay = document.createElement('div');
+                confirmOverlay.id = 'restartConfirmOverlay';
+                confirmOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(10, 10, 15, 0.95);
+                    backdrop-filter: blur(15px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 2500;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+
+                const confirmContent = document.createElement('div');
+                confirmContent.style.cssText = `
+                    background: var(--glass);
+                    border: 2px solid var(--neon-orange);
+                    border-radius: 15px;
+                    padding: 30px;
+                    text-align: center;
+                    max-width: 400px;
+                    width: 90%;
+                    box-shadow: var(--shadow-deep), 0 0 30px rgba(255, 107, 53, 0.3);
+                `;
+
+                confirmContent.innerHTML = `
+                    <div style="font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 900; margin-bottom: 20px; color: var(--neon-orange); text-shadow: 0 0 10px var(--neon-orange);">
+                        ⚠️ CONFERMA RIAVVIO
+                    </div>
+                    <p style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 25px; line-height: 1.5;">
+                        Sei sicuro di voler <strong style="color: var(--neon-red);">riavviare completamente</strong> il gioco?
+                    </p>
+                    <p style="font-size: 0.9rem; color: var(--neon-orange); margin-bottom: 30px;">
+                        🔄 Tornerai al <strong>Livello 1</strong> con <strong>3 vite</strong><br>
+                        💯 Il punteggio attuale andrà <strong>perso</strong>
+                    </p>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <button id="confirmRestart" style="
+                            background: linear-gradient(45deg, var(--neon-red), var(--neon-orange));
+                            border: none;
+                            color: white;
+                            padding: 12px 25px;
+                            font-family: 'Orbitron', monospace;
+                            font-size: 0.9rem;
+                            font-weight: 700;
+                            cursor: pointer;
+                            border-radius: 10px;
+                            min-width: 140px;
+                            transition: all 0.3s ease;
+                            text-transform: uppercase;
+                        ">🔄 SÌ, RIAVVIA</button>
+                        <button id="cancelRestart" style="
+                            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+                            border: none;
+                            color: white;
+                            padding: 12px 25px;
+                            font-family: 'Orbitron', monospace;
+                            font-size: 0.9rem;
+                            font-weight: 700;
+                            cursor: pointer;
+                            border-radius: 10px;
+                            min-width: 140px;
+                            transition: all 0.3s ease;
+                            text-transform: uppercase;
+                        ">❌ ANNULLA</button>
+                    </div>
+                `;
+
+                confirmOverlay.appendChild(confirmContent);
+                document.body.appendChild(confirmOverlay);
+
+                // Animazione di entrata
+                setTimeout(() => {
+                    confirmOverlay.style.opacity = '1';
+                }, 10);
+
+                // Event listeners per i pulsanti
+                document.getElementById('confirmRestart').addEventListener('click', () => {
+                    this.audioManager.playSound('button');
+                    this.hideRestartConfirmation();
+                    this.performFullRestart();
+                });
+
+                document.getElementById('cancelRestart').addEventListener('click', () => {
+                    this.audioManager.playSound('button');
+                    this.hideRestartConfirmation();
+                });
+
+                // Chiudi con ESC
+                const escapeHandler = (e) => {
+                    if (e.key === 'Escape') {
+                        this.audioManager.playSound('button');
+                        this.hideRestartConfirmation();
+                        document.removeEventListener('keydown', escapeHandler);
+                    }
+                };
+                document.addEventListener('keydown', escapeHandler);
+            }
+
+            hideRestartConfirmation() {
+                const overlay = document.getElementById('restartConfirmOverlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        if (overlay.parentNode) {
+                            overlay.remove();
+                        }
+                    }, 300);
+                }
+            }
+
+            performFullRestart() {
+                // Pausa il gioco
                 this.isPaused = false;
                 this.running = false;
+                
+                // Chiudi overlay di pausa se aperto
                 if (document.getElementById('pauseOverlay').classList.contains('active')) {
                     document.getElementById('pauseOverlay').classList.remove('active');
                 }
-                this.audioManager.playSound('button');
                 
+                // Reset completo del gioco
+                this.currentLevel = 1;
+                this.score = 0;
                 this.player.energy = 3;
-                this.score = Math.max(0, this.score - 500);
                 this.startTime = Date.now();
+                this.state = 'story';
                 
-                this.startLevel();
+                // Messaggio di conferma
+                this.showMessage('🔄 Gioco riavviato! Iniziando dal Livello 1...');
+                
+                // Mostra la storia del primo livello
+                setTimeout(() => {
+                    this.story.showStory(1, 'intro');
+                }, 500);
             }
 
             goHomeFromPause() {
@@ -2330,11 +2437,11 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.player.vx = 0;
                 this.player.vy = 0;
                 this.player.onGround = false;
-                this.player.invulnerabilityFrames = 0;
-                this.player.isRespawning = false;
-                this.player.respawnTimer = 0;
                 this.camera.x = 0;
                 this.camera.targetX = 0;
+                
+                // Reset goal message cooldown
+                this.lastGoalMessage = 0;
 
                 level.platforms.forEach(p => {
                     this.entities.push({
@@ -2414,17 +2521,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.updateEnemies(deltaTime);
                 this.updateCamera(deltaTime);
                 this.checkCollisions();
-
-                if (this.player.invulnerabilityFrames > 0) {
-                    this.player.invulnerabilityFrames--;
-                }
-
-                if (this.player.respawnTimer > 0) {
-                    this.player.respawnTimer--;
-                    if (this.player.respawnTimer === 0) {
-                        this.player.isRespawning = false;
-                    }
-                }
 
                 if (this.updateCounter % 120 === 0) {
                     this.updateBackground();
@@ -2586,10 +2682,7 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             checkCollisions() {
                 const p = this.player;
 
-                if (p.isRespawning || p.respawnTimer > 0 || p.invulnerabilityFrames > 0) {
-                    return;
-                }
-
+                // Rimuovo completamente la logica di invulnerabilità - il giocatore può morire subito
                 this.entities.filter(e => e.type === 'collectible' && !e.collected).forEach((crystal) => {
                     const distance = Math.sqrt(
                         Math.pow(p.x + p.width/2 - (crystal.x + crystal.w/2), 2) + 
@@ -2607,9 +2700,7 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
 
                 this.entities.filter(e => e.type === 'enemy').forEach((enemy) => {
                     if (this.collision(p, enemy)) {
-                        if (!p.isRespawning && p.respawnTimer === 0 && p.invulnerabilityFrames === 0) {
-                            this.playerDie();
-                        }
+                        this.playerDie();
                     }
                 });
 
@@ -2621,7 +2712,12 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     if (collected === total) {
                         this.levelComplete();
                     } else {
-                        this.showMessage(`Raccogli tutti i cristalli! (${collected}/${total})`);
+                        // Fix: messaggio portale solo una volta ogni 2 secondi
+                        const now = Date.now();
+                        if (now - this.lastGoalMessage > this.goalMessageCooldown) {
+                            this.showMessage(`Raccogli tutti i cristalli! (${collected}/${total})`);
+                            this.lastGoalMessage = now;
+                        }
                     }
                 }
             }
@@ -2653,20 +2749,13 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
 
             playerDie() {
-                if (this.player.isRespawning || this.player.respawnTimer > 0 || this.player.invulnerabilityFrames > 0) {
-                    return;
-                }
-                
                 this.player.energy--;
                 this.audioManager.playSound('hit');
                 
                 if (this.player.energy <= 0) {
                     this.gameOver();
                 } else {
-                    this.player.isRespawning = true;
-                    this.player.respawnTimer = 60;
-                    this.player.invulnerabilityFrames = this.player.invulnerabilityDuration;
-                    
+                    // Respawn immediato senza timer di invulnerabilità
                     this.player.x = 50;
                     this.player.y = 400;
                     this.player.vx = 0;
@@ -2852,12 +2941,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 
                 if (Math.abs(this.player.vx) > 1) {
                     playerEl.classList.add('moving');
-                }
-                
-                if (this.player.isRespawning) {
-                    playerEl.classList.add('respawning');
-                } else if (this.player.invulnerabilityFrames > 0) {
-                    playerEl.classList.add('invulnerable');
                 }
                 
                 fragment.appendChild(playerEl);
@@ -3052,18 +3135,16 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 if (this.game && this.game.story) {
                     this.game.audioManager.playSound('button');
                     this.game.story.hideStory();
-                    if (this.game.story.currentStoryType === 'intro') {
+                    
+                    // Controlla se è una storia di inizio livello
+                    const storyTitle = document.getElementById('storyTitle').textContent;
+                    if (storyTitle.includes('INIZIA MISSIONE') || storyTitle.includes('IL RISVEGLIO') || 
+                        storyTitle.includes('LE ISOLE FLUTTUANTI') || storyTitle.includes('IL GUANTO DI SFIDA') || 
+                        storyTitle.includes('PRECISIONE ASSOLUTA') || storyTitle.includes('LO SCONTRO FINALE')) {
                         this.game.startLevel();
                     } else {
                         this.game.processNextAction();
                     }
-                }
-            }
-
-            toggleReadMode() {
-                if (this.game && this.game.story) {
-                    this.game.audioManager.playSound('button');
-                    this.game.story.toggleReadingMode();
                 }
             }
 
@@ -3165,12 +3246,6 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
         }
 
-        function toggleReadMode() {
-            if (gameManager) {
-                gameManager.toggleReadMode();
-            }
-        }
-
         function pauseGame() {
             if (gameManager) {
                 gameManager.pauseGame();
@@ -3183,7 +3258,7 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
         }
 
-        function restartLevel() {
+        function restartGame() {
             if (gameManager) {
                 gameManager.restartLevel();
             }
