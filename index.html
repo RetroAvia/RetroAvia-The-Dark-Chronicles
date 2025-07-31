@@ -88,17 +88,68 @@
         }
 
         /* RESPONSIVE DESIGN MIGLIORATO - Mobile First */
-        @media screen and (orientation: portrait) and (max-width: 768px) {
-            body {
+        @media screen and (max-width: 768px) {
+            /* Fix per scroll nel menu principale */
+            body:not(.game-active) {
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            /* Gioco sempre fullscreen */
+            body.game-active {
                 overflow: hidden;
-                /* Rimuovo il transform scale problematico */
+                height: 100vh;
             }
             
             .game-container {
-                /* Uso viewport units più appropriati */
                 width: 100vw;
                 height: 100vh;
                 overflow: hidden;
+                position: relative;
+            }
+            
+            /* Fix viewport per mobile game */
+            .world {
+                width: 120vw; /* Ridotto ulteriormente per mobile */
+                height: 100vh;
+                transform-origin: left top;
+            }
+            
+            /* Zoom controls per mobile */
+            .mobile-zoom-controls {
+                position: absolute;
+                top: 80px;
+                right: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                z-index: 200;
+                pointer-events: all;
+            }
+            
+            .zoom-btn {
+                background: var(--glass);
+                border: 2px solid var(--neon-blue);
+                color: var(--neon-blue);
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+            }
+            
+            .zoom-btn:active {
+                background: var(--neon-blue);
+                color: white;
+                transform: scale(0.95);
             }
             
             .mobile-controls { 
@@ -1634,7 +1685,7 @@
                 </div>
             </div>
             
-            <!-- Input section -->
+            /* Input section */
             <div class="player-input-section">
                 <div class="input-label">🚀 Identificativo Esploratore</div>
                 <input type="text" id="playerName" class="futuristic-input" placeholder="Inserisci il tuo nome da eroe..." maxlength="12">
@@ -1642,6 +1693,30 @@
                     <button class="launch-button" onclick="startGame()">
                         🌌 INIZIA ESPLORAZIONE
                     </button>
+                </div>
+                
+                <!-- Link Instagram -->
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="https://www.instagram.com/retroavia_" target="_blank" rel="noopener noreferrer" style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 10px;
+                        background: linear-gradient(45deg, #E4405F, #C13584, #833AB4);
+                        color: white;
+                        padding: 12px 20px;
+                        text-decoration: none;
+                        border-radius: 25px;
+                        font-family: 'Orbitron', monospace;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(196, 53, 132, 0.3);
+                        animation: fadeInUp 1s ease-out 1.9s both;
+                    " onmouseover="this.style.transform='translateY(-2px) scale(1.05)'; this.style.boxShadow='0 6px 25px rgba(196, 53, 132, 0.5)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 15px rgba(196, 53, 132, 0.3)'">
+                        <span style="font-size: 1.2rem;">📷</span>
+                        <span>Seguici su Instagram</span>
+                        <span style="font-weight: 400; opacity: 0.9;">@retroavia_</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -1723,6 +1798,13 @@
                 <div class="control-group">
                     <div class="control-btn" id="jumpBtn">↑</div>
                 </div>
+            </div>
+            
+            <!-- Mobile Zoom Controls -->
+            <div class="mobile-zoom-controls">
+                <div class="zoom-btn" id="zoomInBtn" title="Zoom In">+</div>
+                <div class="zoom-btn" id="zoomOutBtn" title="Zoom Out">−</div>
+                <div class="zoom-btn" id="zoomResetBtn" title="Reset Zoom">⌂</div>
             </div>
         </div>
     </div>
@@ -2507,6 +2589,75 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 });
             }
 
+            // NUOVO: Setup controlli zoom mobile
+            setupMobileZoom() {
+                const zoomInBtn = document.getElementById('zoomInBtn');
+                const zoomOutBtn = document.getElementById('zoomOutBtn');
+                const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+                if (zoomInBtn) {
+                    ['touchstart', 'mousedown'].forEach(event => {
+                        zoomInBtn.addEventListener(event, (e) => {
+                            e.preventDefault();
+                            this.adjustMobileZoom(0.1);
+                        }, { passive: false });
+                    });
+                }
+
+                if (zoomOutBtn) {
+                    ['touchstart', 'mousedown'].forEach(event => {
+                        zoomOutBtn.addEventListener(event, (e) => {
+                            e.preventDefault();
+                            this.adjustMobileZoom(-0.1);
+                        }, { passive: false });
+                    });
+                }
+
+                if (zoomResetBtn) {
+                    ['touchstart', 'mousedown'].forEach(event => {
+                        zoomResetBtn.addEventListener(event, (e) => {
+                            e.preventDefault();
+                            this.resetMobileZoom();
+                        }, { passive: false });
+                    });
+                }
+
+                // Mostra controlli zoom solo su mobile
+                const isMobile = window.innerWidth <= 768;
+                const zoomControls = document.querySelector('.mobile-zoom-controls');
+                if (zoomControls) {
+                    zoomControls.style.display = isMobile ? 'flex' : 'none';
+                }
+            }
+
+            // NUOVO: Gestione zoom mobile
+            adjustMobileZoom(delta) {
+                this.mobileZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.mobileZoom + delta));
+                this.applyMobileZoom();
+                this.audioManager.playSound('button');
+            }
+
+            resetMobileZoom() {
+                this.mobileZoom = 1;
+                this.applyMobileZoom();
+                this.audioManager.playSound('button');
+            }
+
+            applyMobileZoom() {
+                const gameContainer = document.querySelector('.game-container');
+                if (gameContainer && window.innerWidth <= 768) {
+                    gameContainer.style.transform = `scale(${this.mobileZoom})`;
+                    gameContainer.style.transformOrigin = 'center center';
+                    
+                    // Aggiusta la posizione se necessario
+                    if (this.mobileZoom < 1) {
+                        gameContainer.style.position = 'relative';
+                        gameContainer.style.top = '0';
+                        gameContainer.style.left = '0';
+                    }
+                }
+            }
+
             start(playerName) {
                 this.player.name = playerName;
                 this.currentLevel = 1;
@@ -2526,6 +2677,9 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 this.state = 'playing';
                 this.isPaused = false;
                 this.running = true;
+                
+                // Applica zoom mobile se necessario
+                setTimeout(() => this.applyMobileZoom(), 100);
                 
                 this.audioManager.startLevelMusic(this.currentLevel);
                 this.audioManager.playSound('levelStart');
@@ -3243,8 +3397,23 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                 document.getElementById('overlayTitle').textContent = '🎉 RICOMPENSA SBLOCCATA!';
                 document.getElementById('overlayTitle').className = 'overlay-title success';
                 document.getElementById('overlayContent').innerHTML = `
-                    <div style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; font-family: 'Orbitron', monospace; font-size: 1.2rem; font-weight: 700;">
-                        ${rewardCode}
+                    <div style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; font-family: 'Orbitron', monospace; font-size: 1.2rem; font-weight: 700; position: relative;">
+                        <div id="rewardCode" style="user-select: all; -webkit-user-select: all; -moz-user-select: all;">${rewardCode}</div>
+                        <button onclick="copyRewardCode('${rewardCode}')" style="
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            background: rgba(255,255,255,0.2);
+                            border: 1px solid rgba(255,255,255,0.3);
+                            color: white;
+                            padding: 8px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.8rem;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                            📋 Copia
+                        </button>
                     </div>
                     <p style="font-size: 1.1rem; color: var(--neon-green); margin: 15px 0;">
                         <strong>✨ Sconto ${discount} su ordini sopra ${minimum} ✨</strong>
@@ -3774,6 +3943,71 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
             }
         }
 
+        // NUOVA FUNZIONE: Copia codice sconto
+        function copyRewardCode(code) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => {
+                    showCopyConfirmation('✅ Codice copiato negli appunti!');
+                }).catch(() => {
+                    fallbackCopyText(code);
+                });
+            } else {
+                fallbackCopyText(code);
+            }
+        }
+
+        // Fallback per browser più vecchi
+        function fallbackCopyText(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopyConfirmation('✅ Codice copiato negli appunti!');
+            } catch (err) {
+                showCopyConfirmation('❌ Errore nella copia. Seleziona e copia manualmente.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Mostra conferma copia
+        function showCopyConfirmation(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-family: 'Orbitron', monospace;
+                font-weight: 700;
+                z-index: 10000;
+                animation: slideDown 0.3s ease;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 2000);
+        }
+
         // Initialize game
         function initializeGame() {
             try {
@@ -3800,6 +4034,18 @@ Come ricompensa finale, hai sbloccato il codice sconto supremo e la gloria etern
                     }
                 }
             });
+            
+            // Setup responsive zoom controls visibility
+            function updateZoomControlsVisibility() {
+                const isMobile = window.innerWidth <= 768;
+                const zoomControls = document.querySelector('.mobile-zoom-controls');
+                if (zoomControls) {
+                    zoomControls.style.display = isMobile ? 'flex' : 'none';
+                }
+            }
+            
+            window.addEventListener('resize', updateZoomControlsVisibility);
+            updateZoomControlsVisibility();
         });
 
         // Fallback initialization
